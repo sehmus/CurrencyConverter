@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SymbolsResultModel: Codable {
+public struct SymbolsResultModel: Codable {
     let success: Bool
     let symbols: [String: String]
 }

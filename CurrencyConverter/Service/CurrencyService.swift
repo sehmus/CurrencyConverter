@@ -10,23 +10,13 @@ import Foundation
 import Alamofire
 
 public class CurrencyService : NSObject {
-    public static func getLatestCurrencies(language : String? = nil, page: Int, completionHandler: @escaping (MovieResultModel?, String?) -> Void) {
-        
-        
+    public static func getLatestCurrencies(baseCurrency : String, completionHandler: @escaping (LatestCurrencyResultModel?, String?) -> Void) {
         //Prepare Parameters for Service Call
         var parameters : [String:Any] = [:]
         
- //       parameters["page"] = page
-        parameters["access_key"] = Constants.Service.apiKey
+        parameters["access_key"] = Constants.Service.accessKey
+        parameters["base"] = baseCurrency
         
-        if language != nil {
-            parameters["language"] = language
-        }
-        else
-        {
-            let langStr = Locale.current.languageCode! + "-" + Locale.current.regionCode!
-            parameters["language"] = langStr
-        }
         
         Alamofire.request(Constants.Service.baseUrl + Constants.Service.latestCurrencies,
                           method: .post,
@@ -35,8 +25,34 @@ public class CurrencyService : NSObject {
                             switch response.result{
                             case .success:
                                 let decoder = JSONDecoder()
-                                let vehicleData = try? decoder.decode(MovieResultModel.self, from: response.result.value!)
+                                let vehicleData = try? decoder.decode(LatestCurrencyResultModel.self, from: response.result.value!)
                                 completionHandler(vehicleData, nil)
+                                break
+                            case .failure(let error):
+                                completionHandler(nil, error.localizedDescription)
+                                break
+                            }
+        }
+    }
+    
+    
+    public static func getSymbols(completionHandler: @escaping (SymbolsResultModel?, String?) -> Void) {
+        //Prepare Parameters for Service Call
+        var parameters : [String:Any] = [:]
+        parameters["access_key"] = Constants.Service.accessKey
+        Alamofire.request(Constants.Service.baseUrl + Constants.Service.symbols,
+                          method: .post,
+                          parameters: parameters,
+                          encoding: URLEncoding(destination: .queryString)).validate(statusCode: 200..<300).responseData { response in
+                            switch response.result{
+                            case .success:
+                                let decoder = JSONDecoder()
+                                let symbolsData = try? decoder.decode(SymbolsResultModel.self, from: response.result.value!)
+                                guard let symbols = symbolsData else{
+                                    completionHandler(nil, nil)
+                                    return
+                                }
+                                completionHandler(symbols, nil)
                                 break
                             case .failure(let error):
                                 completionHandler(nil, error.localizedDescription)

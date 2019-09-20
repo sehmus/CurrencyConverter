@@ -7,3 +7,8 @@
 //
 
 import Foundation
+
+public struct LatestCurrencyResultModel: Codable {
+    let success: Bool
+    let symbols: [String: String]
+}

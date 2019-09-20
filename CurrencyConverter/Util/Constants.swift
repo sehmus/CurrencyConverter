@@ -12,10 +12,11 @@ import UIKit
 public struct Constants {
     public struct Service {
         public static var baseUrl = "http://data.fixer.io/api"
-        public static var latestCurrencies = "latest"
-        public static var symbols = "symbols"
-        public static var apiKey : String = "1774364f4b8dd657bfab2edfce774864"
-        public static var imageBaseUrl = "http://image.tmdb.org/t/p/w500"
+        public static var latestCurrencies = "/latest"
+        public static var symbols = "/symbols"
+        public static var accessKey : String = "1774364f4b8dd657bfab2edfce774864"
+        
+        public static var flagBaseUrl : String = "https://restcountries.eu/rest/v2/alpha/"
     }
     
     public struct Color {

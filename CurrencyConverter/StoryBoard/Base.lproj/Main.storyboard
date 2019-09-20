@@ -17,12 +17,85 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="oin-d1-9St">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select base currency." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z9k-LO-9Vm">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a5P-Nm-XaR">
+                                        <rect key="frame" x="0.0" y="20.5" width="375" height="80"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QPs-Al-A2O">
+                                                <rect key="frame" x="115" y="10" width="145.5" height="60"/>
+                                                <subviews>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ouR-QF-ayo">
+                                                        <rect key="frame" x="10" y="5" width="70" height="50"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="50" id="W8C-W7-Xez"/>
+                                                            <constraint firstAttribute="width" constant="70" id="ZQ9-10-hwI"/>
+                                                        </constraints>
+                                                    </imageView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="USD" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j3a-v1-vlr">
+                                                        <rect key="frame" x="90" y="17" width="45.5" height="26.5"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="ouR-QF-ayo" firstAttribute="top" secondItem="QPs-Al-A2O" secondAttribute="top" constant="5" id="8ec-d7-gfP"/>
+                                                    <constraint firstAttribute="bottom" secondItem="ouR-QF-ayo" secondAttribute="bottom" constant="5" id="AIy-dz-OwQ"/>
+                                                    <constraint firstItem="j3a-v1-vlr" firstAttribute="centerY" secondItem="ouR-QF-ayo" secondAttribute="centerY" id="bKW-Su-eaD"/>
+                                                    <constraint firstItem="j3a-v1-vlr" firstAttribute="leading" secondItem="ouR-QF-ayo" secondAttribute="trailing" constant="10" id="d4x-lD-mF1"/>
+                                                    <constraint firstItem="ouR-QF-ayo" firstAttribute="leading" secondItem="QPs-Al-A2O" secondAttribute="leading" constant="10" id="naB-iu-axn"/>
+                                                    <constraint firstAttribute="trailing" secondItem="j3a-v1-vlr" secondAttribute="trailing" constant="10" id="upH-qj-My5"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="80" id="Vw3-bQ-Sgy"/>
+                                            <constraint firstItem="QPs-Al-A2O" firstAttribute="centerX" secondItem="a5P-Nm-XaR" secondAttribute="centerX" id="YKT-tf-tYs"/>
+                                            <constraint firstItem="QPs-Al-A2O" firstAttribute="centerY" secondItem="a5P-Nm-XaR" secondAttribute="centerY" id="eA1-vd-KOF"/>
+                                        </constraints>
+                                    </view>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="WTK-eo-Tju">
+                                        <rect key="frame" x="0.0" y="100.5" width="375" height="546.5"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="BYZ-38-t0r" id="ZeX-Zn-R9k"/>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="aie-3i-Kmn"/>
+                                        </connections>
+                                    </tableView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="oin-d1-9St" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="HZo-OS-NlU"/>
+                            <constraint firstItem="oin-d1-9St" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="b1l-ak-btc"/>
+                            <constraint firstItem="oin-d1-9St" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="gfk-n5-wms"/>
+                            <constraint firstItem="oin-d1-9St" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="rnC-E7-PGa"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="imgBaseCurrency" destination="ouR-QF-ayo" id="nJ0-vj-IIE"/>
+                        <outlet property="lblBaseCurrency" destination="j3a-v1-vlr" id="UYS-m1-ddG"/>
+                        <outlet property="lblInformation" destination="Z9k-LO-9Vm" id="WWI-Xe-mrJ"/>
+                        <outlet property="tblCurrencies" destination="WTK-eo-Tju" id="zV4-7R-6FT"/>
+                        <outlet property="viewBaseCurrency" destination="a5P-Nm-XaR" id="jlD-nY-kxO"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="132" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>

@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  CurrencyConverter
+
+  Created by Sehmus GOKCE on 20.09.2019.
+  Copyright © 2019 Sehmus GOKCE. All rights reserved.
+*/
+
+
+//Currency List Page
+"movielist.page.title" = "Popular Movies";
+"movielist.list.loadmore" = "LOAD MORE...";
+
+//Currency Detail Page
+"movielistdetail.page.title" = "Movie Detail";
+
+
+//Default Dialog
+"dialog.title.error" = "Opps...";
+"dialog.description.error" = "An error occured! Please try again later.";
+"dialog.button.ok" = "OK";
