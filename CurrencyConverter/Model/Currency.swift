@@ -11,5 +11,5 @@ import UIKit
 public struct Currency: Codable {
     let name : String
     let description : String?
-    let value : Double?
+    var value : Double?
 }

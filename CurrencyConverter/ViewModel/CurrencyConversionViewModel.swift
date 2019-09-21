@@ -7,15 +7,37 @@
 //
 
 import Foundation
-protocol CurrencyConversionDelegate {
-
-    
-}
 
 public class CurrencyConversionViewModel {
-    var currencies = [Currency]()
-    var symbols = [Currency]()
-    var delegate: CurrencyViewModelDelegate?
-    var baseCurrency : Currency?
-    var isSymbolMode : Bool = true
+    var baseCurrency : Currency? {
+        didSet {
+            self.baseCurrency?.value = 0.0
+        }
+    }
+    var conversionCurrency : Currency?
 }
+
+extension CurrencyConversionViewModel {
+    
+    /**
+     Calculates the currency to be converted
+     
+     - Parameters:
+     - baseCurrencyAmount: amount of the base currency
+     
+     - Returns: calculated currency amount of to be converted.
+     */
+    func calculateConversionCurrencyRate(baseCurrencyAmount : Double) -> Double{
+        
+        guard let _conversionCurrency = self.conversionCurrency else {
+            return 0.0
+        }
+        let amount : Double  = baseCurrencyAmount * _conversionCurrency.value!
+        return amount
+
+    }
+}
+
+
+
+

@@ -9,30 +9,85 @@
 import Foundation
 
 protocol CurrencyViewModelDelegate {
+    /**
+     Symbol request completed delegate method.
+     */
     func getSymbolRequestCompleted()
+    /**
+     Latest currencies completed delegate method.
+     */
     func getLatestCurrenciesRequestCompleted()
+    /**
+     This method is called when any request has an error.
+     
+     - Parameters:
+     - message: The message for showing to user.
+
+     */
     func requestErrorReturned(message : String?)
+    /**
+     The method which is called when base currency selected.
+     
+     - Parameters:
+     - currency: The selected currency by the user.
+     
+     */
     func baseCurrencySelected(currency : Currency)
+    /**
+     The method which is called when conversion currency selected.
+     
+     - Parameters:
+     - currency: The selected currency by the user.
+     
+     */
     func conversionCurrencySelected(currency : Currency)
+    
+    func resetUIState()
+    /**
+     Hides every indicator on the screen.
+     */
+    func hideIndicators()
+    
     
 }
 
 public class CurrenciesViewModel {
+    /// Currencies to be converted.
     var currencies = [Currency]()
+    /// Currencies for selecting first.
     var symbols = [Currency]()
+    /// Delegate for ViewController
     var delegate: CurrencyViewModelDelegate?
+    ///Selected base currency
     var baseCurrency : Currency?
+    /// First selection mode or not.
     var isSymbolMode : Bool = true
 }
 
 extension CurrenciesViewModel {
+    
+    /**
+     Resets the values of the page to Initial state.
+     
+     */
+    func resetValues() {
+        self.currencies = [Currency]()
+        self.symbols = [Currency]()
+        self.baseCurrency = nil
+        self.isSymbolMode = true
+    }
+    /**
+     Gets the symbols of the currencies.
+     
+     */
     func getSymbols() {
 
+        ViewUtil.showLoadingView()
         guard let _delegate = delegate else {
             return
         }
         CurrencyService.getSymbols { (model, error) in
-            ViewUtil.hideLoadingView()
+            _delegate.hideIndicators()
             guard model != nil else {
                 _delegate.requestErrorReturned(message: nil)
                 return
@@ -52,15 +107,23 @@ extension CurrenciesViewModel {
         }
 
     }
-    
+    /**
+     Gets currencies related to first selected currency for conversion.
+     
+     - Parameters:
+     - baseCurrency: The first selected currency from the user.
+     
+     - Returns: A beautiful, brand-new bicycle,
+     custom-built just for you.
+     */
     func getCurrencies(baseCurrency : String) {
-        
+        ViewUtil.showLoadingView()
         guard let _delegate = delegate else {
             return
         }
         
         CurrencyService.getLatestCurrencies(baseCurrency: baseCurrency) { (model, error) in
-            ViewUtil.hideLoadingView()
+            _delegate.hideIndicators()
             guard model != nil else {
                 _delegate.requestErrorReturned(message: nil)
                 return
@@ -79,7 +142,13 @@ extension CurrenciesViewModel {
         
     }
     
-    
+    /**
+     The method that handles selection of the currencies by the user.
+     
+     - Parameters:
+     - row: selected row  number by the user.
+     
+     */
     func userPressedTheSymbol(row : Int) {
         guard let _delegate = delegate else {
             return
@@ -91,9 +160,7 @@ extension CurrenciesViewModel {
         }
         else
         {
-            _delegate.conversionCurrencySelected(currency: symbols[row])
+            _delegate.conversionCurrencySelected(currency: currencies[row])
         }
-        
-        
     }
 }

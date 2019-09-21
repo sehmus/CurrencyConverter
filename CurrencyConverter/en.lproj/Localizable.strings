@@ -8,11 +8,12 @@
 
 
 //Currency List Page
-"movielist.page.title" = "Popular Movies";
+"currencies.page.title" = "Select Currencies";
+"currencies.page.lblinformation.base.text" = "Please select base currency";
 "movielist.list.loadmore" = "LOAD MORE...";
 
 //Currency Detail Page
-"movielistdetail.page.title" = "Movie Detail";
+"currencyconversion.page.title" = "Convert Currency";
 
 
 //Default Dialog

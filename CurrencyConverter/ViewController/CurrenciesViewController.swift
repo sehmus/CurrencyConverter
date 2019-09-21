@@ -15,7 +15,11 @@ class CurrenciesViewController: UIViewController {
     @IBOutlet weak var viewBaseCurrency: UIView!
     @IBOutlet weak var tblCurrencies: UITableView!
     
+    //Pull to refresh Currencies TableView.
+    private let refreshControl = UIRefreshControl()
     
+    
+//    ViewModel of CurrenciesViewController
     lazy var viewModel: CurrenciesViewModel = {
         let vm = CurrenciesViewModel()
         vm.delegate = self
@@ -25,22 +29,74 @@ class CurrenciesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "currencies.page.title".localized
+        self.lblInformation.text = "currencies.page.lblinformation.base.text".localized
+        
+//      Register Custom Table View Cell
         tblCurrencies.register(UINib(nibName: CurrencyTableViewCell.className, bundle: Bundle(for: CurrencyTableViewCell.self)), forCellReuseIdentifier: CurrencyTableViewCell.className)
-        self.viewModel.getSymbols()
-        self.viewBaseCurrency.isHidden = true
-        self.lblInformation.isHidden = false
-    
+        
+        //Defining refresh control of the tableview.
+        tblCurrencies.refreshControl = refreshControl
+        
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(refreshCurrencies(_:)), for: .valueChanged)
+
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.resetUIState()
+
+    }
     
+    /**
+     Deselects selected row of the tableview.
+     */
     func deselectSelectedRow(){
         guard let selectedItem = tblCurrencies.indexPathForSelectedRow else {return}
         tblCurrencies.deselectRow(at: selectedItem, animated: true)
     }
+    
+    /**
+     Reload currencies.
+     */
+    @objc private func refreshCurrencies(_ sender: Any) {
+        if viewModel.isSymbolMode {
+            self.viewModel.getSymbols()
+        }
+        else {
+            guard let _baseCurrency = self.viewModel.baseCurrency else {return}
+            self.viewModel.getCurrencies(baseCurrency: _baseCurrency.name)
+        }
+    }
+    
 }
 
+
 extension CurrenciesViewController : CurrencyViewModelDelegate {
+    
+    func hideIndicators() {
+        self.refreshControl.endRefreshing()
+        ViewUtil.hideLoadingView()
+    }
+    
+    func resetUIState() {
+        //      Allow user to select new currencies for conversion
+        self.viewModel.resetValues()
+        self.viewModel.getSymbols()
+        self.viewBaseCurrency.isHidden = true
+        self.lblInformation.isHidden = false
+        self.tblCurrencies.reloadData()
+    }
+    
     func conversionCurrencySelected(currency: Currency) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: CurrencyConversionViewController.className) as! CurrencyConversionViewController
+        
+        guard let _baseCurrency = self.viewModel.baseCurrency else { return }
+        vc.viewModel.baseCurrency = _baseCurrency
+        vc.viewModel.conversionCurrency = currency
+        self.navigationController?.pushViewController(vc, animated: true)
+        
         
     }
     
@@ -55,8 +111,6 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         imgBaseCurrency.image = UIImage(named: currency.name.lowercased())
         self.deselectSelectedRow()
         self.viewModel.getCurrencies(baseCurrency: currency.name)
-        
-        
         
     }
     
