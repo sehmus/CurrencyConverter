@@ -10,5 +10,7 @@ import Foundation
 
 public struct LatestCurrencyResultModel: Codable {
     let success: Bool
-    let symbols: [String: String]
+    let timestamp: Int
+    let base, date: String
+    let rates: [String: Double]
 }

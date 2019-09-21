@@ -25,8 +25,8 @@ public class CurrencyService : NSObject {
                             switch response.result{
                             case .success:
                                 let decoder = JSONDecoder()
-                                let vehicleData = try? decoder.decode(LatestCurrencyResultModel.self, from: response.result.value!)
-                                completionHandler(vehicleData, nil)
+                                let ratesData = try? decoder.decode(LatestCurrencyResultModel.self, from: response.result.value!)
+                                completionHandler(ratesData, nil)
                                 break
                             case .failure(let error):
                                 completionHandler(nil, error.localizedDescription)

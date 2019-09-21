@@ -29,6 +29,7 @@ class CurrencyTableViewCell: UITableViewCell {
             return
         }
         lblAmount.text = "\(amount)"
+        lblAmount.isHidden = false
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

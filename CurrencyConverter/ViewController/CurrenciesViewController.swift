@@ -40,12 +40,21 @@ class CurrenciesViewController: UIViewController {
 }
 
 extension CurrenciesViewController : CurrencyViewModelDelegate {
+    func conversionCurrencySelected(currency: Currency) {
+        
+    }
+    
+    func getLatestCurrenciesRequestCompleted() {
+        tblCurrencies.reloadData()
+    }
+    
     func baseCurrencySelected(currency: Currency) {
         viewBaseCurrency.isHidden = false
         lblInformation.isHidden = true
         lblBaseCurrency.text = currency.name
         imgBaseCurrency.image = UIImage(named: currency.name.lowercased())
         self.deselectSelectedRow()
+        self.viewModel.getCurrencies(baseCurrency: currency.name)
         
         
         

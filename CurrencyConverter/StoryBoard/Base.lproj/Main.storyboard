@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TTb-1N-jOb">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,6 +10,22 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="dRV-Q3-2sT">
+            <objects>
+                <navigationController id="h28-vM-BTa" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="6so-IW-hwS">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="X09-WR-qDf"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DKp-Yt-sUX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-710" y="134"/>
+        </scene>
         <!--Currencies View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -19,7 +35,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="oin-d1-9St">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select base currency." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z9k-LO-9Vm">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="20.5"/>
@@ -66,7 +82,7 @@
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="WTK-eo-Tju">
-                                        <rect key="frame" x="0.0" y="100.5" width="375" height="546.5"/>
+                                        <rect key="frame" x="0.0" y="100.5" width="375" height="502.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
                                             <outlet property="dataSource" destination="BYZ-38-t0r" id="ZeX-Zn-R9k"/>
@@ -85,6 +101,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" id="rV4-ia-ecK"/>
                     <connections>
                         <outlet property="imgBaseCurrency" destination="ouR-QF-ayo" id="nJ0-vj-IIE"/>
                         <outlet property="lblBaseCurrency" destination="j3a-v1-vlr" id="UYS-m1-ddG"/>
@@ -96,6 +113,75 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="132" y="133.5832083958021"/>
+        </scene>
+        <!--Currency Conversion View Controller-->
+        <scene sceneID="KrM-Mg-4FO">
+            <objects>
+                <viewController id="TTb-1N-jOb" customClass="CurrencyConversionViewController" customModule="CurrencyConverter" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Fmx-7z-HUs">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j6k-WC-o2G" customClass="CurrencyTextField" customModule="CurrencyConverter" customModuleProvider="target">
+                                <rect key="frame" x="40" y="36" width="254.5" height="65"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="65" id="Van-yd-ob6"/>
+                                </constraints>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1is-Mi-7eF" customClass="CurrencyTextField" customModule="CurrencyConverter" customModuleProvider="target">
+                                <rect key="frame" x="40" y="106" width="256" height="65"/>
+                                <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="65" id="7Vw-Mw-gw8"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="USD" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S9u-xF-WIW">
+                                <rect key="frame" x="314.5" y="56.5" width="40.5" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="GBP" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJz-Cc-jrk">
+                                <rect key="frame" x="316" y="126.5" width="39" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PW4-TS-i5W">
+                                <rect key="frame" x="0.0" y="103" width="375" height="1"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="S9u-xF-WIW" firstAttribute="centerY" secondItem="j6k-WC-o2G" secondAttribute="centerY" id="2V7-Oe-NA7"/>
+                            <constraint firstItem="1is-Mi-7eF" firstAttribute="top" secondItem="j6k-WC-o2G" secondAttribute="bottom" constant="5" id="4z1-RF-ytd"/>
+                            <constraint firstItem="ZJz-Cc-jrk" firstAttribute="leading" secondItem="1is-Mi-7eF" secondAttribute="trailing" constant="20" id="5He-8D-f6c"/>
+                            <constraint firstItem="ZJz-Cc-jrk" firstAttribute="centerY" secondItem="1is-Mi-7eF" secondAttribute="centerY" id="74j-vt-1Uj"/>
+                            <constraint firstAttribute="trailing" secondItem="PW4-TS-i5W" secondAttribute="trailing" id="9RQ-Vb-OVY"/>
+                            <constraint firstItem="b45-PX-X6A" firstAttribute="trailing" secondItem="ZJz-Cc-jrk" secondAttribute="trailing" constant="20" id="IN2-xk-Gfg"/>
+                            <constraint firstItem="1is-Mi-7eF" firstAttribute="top" secondItem="PW4-TS-i5W" secondAttribute="bottom" constant="2" id="K7a-4r-mGJ"/>
+                            <constraint firstItem="PW4-TS-i5W" firstAttribute="top" secondItem="j6k-WC-o2G" secondAttribute="bottom" constant="2" id="MDw-eE-paB"/>
+                            <constraint firstItem="PW4-TS-i5W" firstAttribute="leading" secondItem="Fmx-7z-HUs" secondAttribute="leading" id="YdW-n8-iWi"/>
+                            <constraint firstItem="b45-PX-X6A" firstAttribute="trailing" secondItem="S9u-xF-WIW" secondAttribute="trailing" constant="20" id="bCl-hD-wVM"/>
+                            <constraint firstItem="1is-Mi-7eF" firstAttribute="leading" secondItem="b45-PX-X6A" secondAttribute="leading" constant="40" id="dky-fZ-ad0"/>
+                            <constraint firstItem="j6k-WC-o2G" firstAttribute="leading" secondItem="b45-PX-X6A" secondAttribute="leading" constant="40" id="fgL-HS-XfG"/>
+                            <constraint firstItem="S9u-xF-WIW" firstAttribute="leading" secondItem="j6k-WC-o2G" secondAttribute="trailing" constant="20" id="hgG-RB-cg7"/>
+                            <constraint firstItem="j6k-WC-o2G" firstAttribute="top" secondItem="b45-PX-X6A" secondAttribute="top" constant="16" id="qWj-Kn-gie"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="b45-PX-X6A"/>
+                    </view>
+                    <connections>
+                        <outlet property="lblBaseCurrency" destination="2V7-Oe-NA7" id="9eb-Ac-eCD"/>
+                        <outlet property="lblConversionCurrency" destination="ZJz-Cc-jrk" id="Yec-0f-rxU"/>
+                        <outlet property="tfBaseCurrency" destination="j6k-WC-o2G" id="tAd-oH-p9T"/>
+                        <outlet property="tfConversionCurrency" destination="1is-Mi-7eF" id="DUk-ck-6LL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZGS-Ke-Xbb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="949.60000000000002" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>
