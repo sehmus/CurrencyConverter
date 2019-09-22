@@ -10,10 +10,18 @@ import Foundation
 import Alamofire
 
 public class CurrencyService : NSObject {
+    
+    
+    /**
+     Gets Currencies related to Selected Currency.
+     
+     - Parameters:
+     - baseCurrency: The base currency selected by user.
+     - completionHandler: Callback for getting model or error.
+
+     */
     public static func getLatestCurrencies(baseCurrency : String, completionHandler: @escaping (LatestCurrencyResultModel?, String?) -> Void) {
-        //Prepare Parameters for Service Call
         var parameters : [String:Any] = [:]
-        
         parameters["access_key"] = Constants.Service.accessKey
         parameters["base"] = baseCurrency
         
@@ -35,9 +43,14 @@ public class CurrencyService : NSObject {
         }
     }
     
-    
+    /**
+     Gets Symbols for selecting initially.
+     
+     - Parameters:
+     - completionHandler: Callback for getting model or error.
+     
+     */
     public static func getSymbols(completionHandler: @escaping (SymbolsResultModel?, String?) -> Void) {
-        //Prepare Parameters for Service Call
         var parameters : [String:Any] = [:]
         parameters["access_key"] = Constants.Service.accessKey
         Alamofire.request(Constants.Service.baseUrl + Constants.Service.symbols,

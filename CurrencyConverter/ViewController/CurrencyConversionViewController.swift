@@ -2,7 +2,6 @@
 //  CurrencyConversionViewController.swift
 //  CurrencyConverter
 //
-//  Created by Sehmus GOKCE on 21.09.2019.
 //  Copyright © 2019 Sehmus GOKCE. All rights reserved.
 //
 

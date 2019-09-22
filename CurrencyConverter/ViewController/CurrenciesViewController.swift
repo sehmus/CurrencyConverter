@@ -2,7 +2,6 @@
 //  ViewController.swift
 //  CurrencyConverter
 //
-//  Created by Sehmus GOKCE on 19.09.2019.
 //  Copyright © 2019 Sehmus GOKCE. All rights reserved.
 //
 
@@ -148,6 +147,8 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
             ViewUtil.displayErrorMessage(vc: self)
             return
         }
+        
+        ViewUtil.displayErrorMessage(vc: self, message: msg)
     }
     func getSymbolRequestCompleted() {
         tblCurrencies.reloadData()
@@ -183,7 +184,7 @@ extension CurrenciesViewController : UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return Constants.CurrenciesTableView.CellHeight
     }
     
     

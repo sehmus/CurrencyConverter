@@ -490,7 +490,7 @@ extension String {
 
 public extension Decimal {
     
-    public var formattedAmount: String? {
+    var formattedAmount: String? {
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: "tr")
         formatter.generatesDecimalNumbers = true

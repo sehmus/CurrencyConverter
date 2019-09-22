@@ -2,7 +2,6 @@
 //  Constants.swift
 //  CurrencyConverter
 //
-//  Created by Sehmus Gokce on 20.09.2019.
 //  Copyright © 2019 Sehmus GOKCE. All rights reserved.
 //
 
@@ -34,11 +33,11 @@ public struct Constants {
         
     }
     
-    public struct MovieCollectionView {
-        public static let CellHeight : CGFloat = 150
-        public static let CellMargin : CGFloat = 5
+    public struct CurrenciesTableView {
+        public static let CellHeight : CGFloat = 80
     }
-    public struct MovieFooterViewCell {
-        public static let CellHeight : CGFloat = 50
+    
+    public struct CurrencyConversion {
+        public static let BaseCurrencyInitialValue : Double = 0.0
     }
 }

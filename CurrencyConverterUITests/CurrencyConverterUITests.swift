@@ -2,7 +2,6 @@
 //  CurrencyConverterUITests.swift
 //  CurrencyConverterUITests
 //
-//  Created by Sehmus GOKCE on 19.09.2019.
 //  Copyright © 2019 Sehmus GOKCE. All rights reserved.
 //
 

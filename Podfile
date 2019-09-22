@@ -8,7 +8,6 @@ target 'CurrencyConverter' do
   # Pods for CurrencyConverter
   pod 'Alamofire', '~> 4.8.2'
   pod 'NVActivityIndicatorView'
-  pod 'SwiftyUserDefaults', '~> 4.0'
   
 
   target 'CurrencyConverterTests' do
