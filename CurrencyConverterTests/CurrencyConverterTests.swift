@@ -65,6 +65,31 @@ class CurrencyConverterTests: XCTestCase {
         
         
     }
+    func testInitialBaseCurrencyInConversion() {
+        let currencyConversionVM = CurrencyConversionViewModel()
+        currencyConversionVM.baseCurrency = Currency(name: "TST", description: ".", value: nil)
+        guard let initialValue = currencyConversionVM.baseCurrency?.value else {
+            return XCTFail("initial currency value is nil !")
+        }
+        XCTAssertEqual(0, initialValue)
+        
+        
+    }
+    
+    func testResetCurrenciesValues() {
+        let currenciesVM = CurrenciesViewModel()
+        currenciesVM.baseCurrency = Currency(name: "TST", description: ".", value: nil)
+        currenciesVM.isSymbolMode = false
+        currenciesVM.symbols.append(Currency(name: "TST", description: ".", value: 1.0))
+        currenciesVM.currencies.append(Currency(name: "TST2", description: ".", value: 1.2))
+        currenciesVM.resetValues()
+        
+        XCTAssertEqual(0, currenciesVM.currencies.count)
+        XCTAssertEqual(0, currenciesVM.symbols.count)
+        XCTAssertTrue(currenciesVM.isSymbolMode)
+        XCTAssertNil(currenciesVM.baseCurrency)
+        
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
