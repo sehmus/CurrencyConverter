@@ -12,16 +12,58 @@ import XCTest
 class CurrencyConverterTests: XCTestCase {
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testGetSymbolsAsync() {
+        let promise = XCTestExpectation(description: "Success Status")
+        CurrencyService.getSymbols { (model, error) in
+            guard error == nil else {
+                XCTFail("Error: \(error ?? "Error!")")
+                return
+            }
+            guard model != nil else {
+                XCTFail("Error: model is nil")
+                return
+            }
+            if model!.success {
+                promise.fulfill()
+            }
+        }
+        
+        wait(for: [promise], timeout: 10.0)
+    }
+    
+    func testGetCurrenciesAsync() {
+        let promise = XCTestExpectation(description: "Success Status")
+        CurrencyService.getLatestCurrencies(baseCurrency: "TRY") { (model, error) in
+            guard error == nil else {
+                XCTFail("Error: \(error ?? "Error!")")
+                return
+            }
+            guard model != nil else {
+                XCTFail("Error: model is nil")
+                return
+            }
+            if model!.success {
+                promise.fulfill()
+            }
+        }
+        
+        wait(for: [promise], timeout: 10.0)
+    }
+    
+    func testCalculateCurrency() {
+        let currencyConversionVM = CurrencyConversionViewModel()
+        currencyConversionVM.conversionCurrency = Currency(name: "USD", description: ".", value: 5.0)
+        let calculatedAmount = currencyConversionVM.calculateConversionCurrencyRate(baseCurrencyAmount: 10)
+        XCTAssertGreaterThan(calculatedAmount, 0)
+        XCTAssertEqual(calculatedAmount, 50.0)
+        
+        
     }
 
     func testPerformanceExample() {

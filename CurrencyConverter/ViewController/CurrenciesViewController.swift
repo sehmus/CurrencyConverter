@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CurrenciesViewController: UIViewController {
+class CurrenciesViewController: BaseViewController {
     @IBOutlet weak var lblInformation: UILabel!
     @IBOutlet weak var imgBaseCurrency: UIImageView!
     @IBOutlet weak var lblBaseCurrency: UILabel!
@@ -74,12 +74,18 @@ class CurrenciesViewController: UIViewController {
 
 
 extension CurrenciesViewController : CurrencyViewModelDelegate {
-    
+    /**
+     Hides indicators on the view which is visible.
+     */
     func hideIndicators() {
         self.refreshControl.endRefreshing()
         ViewUtil.hideLoadingView()
     }
     
+    
+    /**
+     Resets UI State to Initial
+     */
     func resetUIState() {
         //      Allow user to select new currencies for conversion
         self.viewModel.resetValues()
@@ -89,6 +95,13 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         self.tblCurrencies.reloadData()
     }
     
+    /**
+     This method is called when conversion currency selected by user.
+     
+     - Parameters:
+     - currency: The selected currency by the user.
+     
+     */
     func conversionCurrencySelected(currency: Currency) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: CurrencyConversionViewController.className) as! CurrencyConversionViewController
         
@@ -100,10 +113,19 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         
     }
     
+    /**
+     Called when currencies called successfully.
+     */
     func getLatestCurrenciesRequestCompleted() {
         tblCurrencies.reloadData()
     }
     
+    /**
+     Called when base currency selected by the user.
+     
+     - Parameters:
+     - currency: Selected base currency by user.
+     */
     func baseCurrencySelected(currency: Currency) {
         viewBaseCurrency.isHidden = false
         lblInformation.isHidden = true
@@ -114,6 +136,13 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         
     }
     
+    /**
+     Appropriate method for showing error message when request finished with error.
+     
+     - Parameters:
+     - message: String for showing user.
+     
+     */
     func requestErrorReturned(message: String?) {
         guard let msg = message else{
             ViewUtil.displayErrorMessage(vc: self)

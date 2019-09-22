@@ -31,8 +31,8 @@ open class CurrencyTextField: UIView, UITextFieldDelegate {
     
     // Default values
     private enum Defaults {
-        public static let imageClose: UIImage = UIImage(named: "test_close", in: Bundle(for: CurrencyTextField.self), compatibleWith: nil)!
-        public static let imageInfo: UIImage = UIImage(named: "test_info", in: Bundle(for: CurrencyTextField.self), compatibleWith: nil)!
+        public static let imageClose: UIImage = UIImage(named: "ic_close", in: Bundle(for: CurrencyTextField.self), compatibleWith: nil)!
+        public static let imageInfo: UIImage = UIImage(named: "ic_info", in: Bundle(for: CurrencyTextField.self), compatibleWith: nil)!
         public static let borderWidth: CGFloat = 2
         public static let cornerRadius: CGFloat = 2
         public static let colorTextFieldBg = UIColor.clear
@@ -168,13 +168,13 @@ open class CurrencyTextField: UIView, UITextFieldDelegate {
             return false
         }
         
-        let notAllowedCharacters = CharacterSet(charactersIn: "1234567890.,\\b").inverted
+        let notAllowedCharacters = CharacterSet(charactersIn: "1234567890.,\\b/\\").inverted
         let filtered = string.components(separatedBy: notAllowedCharacters).joined(separator: "")
         guard filtered == string else {
             return false
         }
         
-        if string == "." || string == "," {
+        if string == "." || string == "," || string == "/" || string == "\\"  {
             if let newPosition = textField.position(from: textField.beginningOfDocument, offset: (textField.text?.count)! - 2) {
                 textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
                 return false

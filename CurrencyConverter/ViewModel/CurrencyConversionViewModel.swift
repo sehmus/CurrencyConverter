@@ -30,7 +30,7 @@ extension CurrencyConversionViewModel {
     func calculateConversionCurrencyRate(baseCurrencyAmount : Double) -> Double{
         
         guard let _conversionCurrency = self.conversionCurrency else {
-            return 0.0
+            return -1.0
         }
         let amount : Double  = baseCurrencyAmount * _conversionCurrency.value!
         return amount
