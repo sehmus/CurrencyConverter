@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class CurrenciesViewController: BaseViewController {
     @IBOutlet weak var lblInformation: UILabel!
@@ -19,7 +21,7 @@ class CurrenciesViewController: BaseViewController {
     
     
 //    ViewModel of CurrenciesViewController
-    lazy var viewModel: CurrenciesViewModel = {
+    lazy var currenciesVieWModel: CurrenciesViewModel = {
         let vm = CurrenciesViewModel()
         vm.delegate = self
         return vm
@@ -30,6 +32,10 @@ class CurrenciesViewController: BaseViewController {
         
         self.title = "currencies.page.title".localized
         self.lblInformation.text = "currencies.page.lblinformation.base.text".localized
+        self.viewModel = self.currenciesVieWModel
+        
+        self.tblCurrencies.rx.setDelegate(self).disposed(by: disposeBag)
+        //self.tblCurrencies.delegate = nil
         
 //      Register Custom Table View Cell
         tblCurrencies.register(UINib(nibName: CurrencyTableViewCell.className, bundle: Bundle(for: CurrencyTableViewCell.self)), forCellReuseIdentifier: CurrencyTableViewCell.className)
@@ -39,14 +45,77 @@ class CurrenciesViewController: BaseViewController {
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshCurrencies(_:)), for: .valueChanged)
+        
+        
+        
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.resetUIState()
+        
+        
+        self.observeSymbolRequest()
+        self.observeCurrencyRequest()
+        self.observeBaseCurrency()
+        self.observeTableViewSelection()
+        
 
     }
+    
+    func observeSymbolRequest() {
+
+        self.currenciesVieWModel.symbols
+            .bind(to: self.tblCurrencies.rx.items(cellIdentifier: CurrencyTableViewCell.className, cellType: CurrencyTableViewCell.self)) { (row, element, cell) in
+                
+                if self.currenciesVieWModel.isSymbolMode.value {
+                    cell.bindCurrencyModel(currency: element)
+                }
+                else
+                {
+                    //cell.bindCurrencyModel(currency: currenciesVieWModel.currencies.value[indexPath.row])
+                }
+        }
+        .disposed(by: self.disposeBag)
+    }
+    
+    func observeTableViewSelection() {
+        self.tblCurrencies.rx.modelSelected(Currency.self).asDriver(onErrorJustReturn: Currency(name: "", description: "", value: 0)).drive(self.currenciesVieWModel.baseCurrency).disposed(by: disposeBag)
+    }
+    
+    func observeCurrencyRequest() {
+        self.currenciesVieWModel.currencies.subscribe(onNext: { currencies in
+            self.tblCurrencies.reloadData()
+            }).disposed(by: disposeBag)
+    }
+    
+    func observeBaseCurrency() {
+        self.currenciesVieWModel.baseCurrency.subscribe(onNext: { currency in
+            
+            guard let currency = currency else {return}
+            
+            self.viewBaseCurrency.isHidden = false
+            self.lblInformation.isHidden = true
+            self.lblBaseCurrency.text = currency.name
+            self.imgBaseCurrency.image = UIImage(named: currency.name.lowercased())
+            self.deselectSelectedRow()
+            self.currenciesVieWModel.getCurrencies(baseCurrency: currency.name)
+ 
+            
+            }).disposed(by: disposeBag)
+    }
+    
+    override func hideAllIndicators() {
+        super.hideAllIndicators()
+        self.refreshControl.endRefreshing()
+    }
+    
+    override func showAllIndicators() {
+        super.showAllIndicators()
+        self.refreshControl.beginRefreshing()
+    }
+    
     
     /**
      Deselects selected row of the tableview.
@@ -60,12 +129,13 @@ class CurrenciesViewController: BaseViewController {
      Reload currencies.
      */
     @objc private func refreshCurrencies(_ sender: Any) {
-        if viewModel.isSymbolMode {
-            self.viewModel.getSymbols()
+        if currenciesVieWModel.isSymbolMode.value {
+            self.currenciesVieWModel.getSymbols()
         }
         else {
-            guard let _baseCurrency = self.viewModel.baseCurrency else {return}
-            self.viewModel.getCurrencies(baseCurrency: _baseCurrency.name)
+            //TODO: Fix this
+            //guard let _baseCurrency = self.currenciesVieWModel.baseCurrency else {return}
+            //self.currenciesVieWModel.getCurrencies(baseCurrency: _baseCurrency.name)
         }
     }
     
@@ -74,21 +144,12 @@ class CurrenciesViewController: BaseViewController {
 
 extension CurrenciesViewController : CurrencyViewModelDelegate {
     /**
-     Hides indicators on the view which is visible.
-     */
-    func hideIndicators() {
-        self.refreshControl.endRefreshing()
-        ViewUtil.hideLoadingView()
-    }
-    
-    
-    /**
      Resets UI State to Initial
      */
     func resetUIState() {
         //      Allow user to select new currencies for conversion
-        self.viewModel.resetValues()
-        self.viewModel.getSymbols()
+        self.currenciesVieWModel.resetValues()
+        self.currenciesVieWModel.getSymbols()
         self.viewBaseCurrency.isHidden = true
         self.lblInformation.isHidden = false
         self.tblCurrencies.reloadData()
@@ -104,34 +165,13 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
     func conversionCurrencySelected(currency: Currency) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: CurrencyConversionViewController.className) as! CurrencyConversionViewController
         
-        guard let _baseCurrency = self.viewModel.baseCurrency else { return }
-        vc.viewModel.baseCurrency = _baseCurrency
-        vc.viewModel.conversionCurrency = currency
+        
+        //TODO: Fix this
+        //guard let _baseCurrency = self.currenciesVieWModel.baseCurrency else { return }
+        //vc.ccViewModel.baseCurrency = _baseCurrency
+        vc.ccViewModel.conversionCurrency = currency
         self.navigationController?.pushViewController(vc, animated: true)
         
-        
-    }
-    
-    /**
-     Called when currencies called successfully.
-     */
-    func getLatestCurrenciesRequestCompleted() {
-        tblCurrencies.reloadData()
-    }
-    
-    /**
-     Called when base currency selected by the user.
-     
-     - Parameters:
-     - currency: Selected base currency by user.
-     */
-    func baseCurrencySelected(currency: Currency) {
-        viewBaseCurrency.isHidden = false
-        lblInformation.isHidden = true
-        lblBaseCurrency.text = currency.name
-        imgBaseCurrency.image = UIImage(named: currency.name.lowercased())
-        self.deselectSelectedRow()
-        self.viewModel.getCurrencies(baseCurrency: currency.name)
         
     }
     
@@ -150,46 +190,13 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         
         ViewUtil.displayErrorMessage(vc: self, message: msg)
     }
-    func getSymbolRequestCompleted() {
-        tblCurrencies.reloadData()
-    }
+    
 }
 
-extension CurrenciesViewController : UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if viewModel.isSymbolMode {
-            return viewModel.symbols.count
-        }
-        else
-        {
-            return viewModel.currencies.count
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tblCurrencies.dequeueReusableCell(withIdentifier: CurrencyTableViewCell.className) as! CurrencyTableViewCell
-        
-        if viewModel.isSymbolMode {
-             cell.bindCurrencyModel(currency: viewModel.symbols[indexPath.row])
-        }
-        else
-        {
-             cell.bindCurrencyModel(currency: viewModel.currencies[indexPath.row])
-        }
-        return cell
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
+extension CurrenciesViewController : UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.CurrenciesTableView.CellHeight
     }
-    
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.userPressedTheSymbol(row: indexPath.row)
-    }
-    
+
 }

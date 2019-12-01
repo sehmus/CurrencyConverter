@@ -8,6 +8,8 @@ target 'CurrencyConverter' do
   # Pods for CurrencyConverter
   pod 'Alamofire', '~> 4.8.2'
   pod 'NVActivityIndicatorView'
+  pod 'RxSwift', '~> 5'
+  pod 'RxCocoa', '~> 5'
   
 
   target 'CurrencyConverterTests' do

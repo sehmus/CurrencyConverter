@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class CurrencyConversionViewModel {
+public class CurrencyConversionViewModel : BaseViewModel {
     var baseCurrency : Currency? {
         didSet {
             self.baseCurrency?.value = Constants.CurrencyConversion.BaseCurrencyInitialValue

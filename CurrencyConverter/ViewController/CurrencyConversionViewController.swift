@@ -16,20 +16,20 @@ class CurrencyConversionViewController: BaseViewController {
     @IBOutlet weak var lblConversionCurrencyAmount: UILabel!
     
     
-    lazy var viewModel: CurrencyConversionViewModel = {
+    lazy var ccViewModel: CurrencyConversionViewModel = {
         let vm = CurrencyConversionViewModel()
         return vm
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.viewModel = ccViewModel
         self.title = "currencyconversion.page.title".localized
         
         self.tfBaseCurrency.delegate = self
         
-        guard let _baseCurrency = self.viewModel.baseCurrency else {return}
-        guard let _conversionCurrency = self.viewModel.conversionCurrency else {return}
+        guard let _baseCurrency = self.ccViewModel.baseCurrency else {return}
+        guard let _conversionCurrency = self.ccViewModel.conversionCurrency else {return}
         
         self.tfBaseCurrency.setAmount(amount: Decimal(_baseCurrency.value!))
         self.lblBaseCurrency.text = _baseCurrency.name
@@ -43,7 +43,7 @@ class CurrencyConversionViewController: BaseViewController {
 
 extension CurrencyConversionViewController : CurrencyTextFieldDelegate {
     func currencyTextFieldTextChanged(value: Double, currencyField: CurrencyTextField) {
-        let calculatedAmount = self.viewModel.calculateConversionCurrencyRate(baseCurrencyAmount: value)
+        let calculatedAmount = self.ccViewModel.calculateConversionCurrencyRate(baseCurrencyAmount: value)
         lblConversionCurrencyAmount.text = String.init(format: "%.2lf", calculatedAmount)
     }
     

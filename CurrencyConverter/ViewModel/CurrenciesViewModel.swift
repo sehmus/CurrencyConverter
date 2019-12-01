@@ -6,32 +6,10 @@
 //
 
 import Foundation
+import RxCocoa
+import RxSwift
 
 protocol CurrencyViewModelDelegate {
-    /**
-     Symbol request completed delegate method.
-     */
-    func getSymbolRequestCompleted()
-    /**
-     Latest currencies completed delegate method.
-     */
-    func getLatestCurrenciesRequestCompleted()
-    /**
-     This method is called when any request has an error.
-     
-     - Parameters:
-     - message: The message for showing to user.
-
-     */
-    func requestErrorReturned(message : String?)
-    /**
-     The method which is called when base currency selected.
-     
-     - Parameters:
-     - currency: The selected currency by the user.
-     
-     */
-    func baseCurrencySelected(currency : Currency)
     /**
      The method which is called when conversion currency selected.
      
@@ -42,38 +20,56 @@ protocol CurrencyViewModelDelegate {
     func conversionCurrencySelected(currency : Currency)
     
     func resetUIState()
-    /**
-     Hides every indicator on the screen.
-     */
-    func hideIndicators()
     
     
 }
 
-public class CurrenciesViewModel {
+public class CurrenciesViewModel : BaseViewModel {
     /// Currencies to be converted.
-    var currencies = [Currency]()
+    var currencies = BehaviorRelay<[Currency]>(value: [Currency]())
     /// Currencies for selecting first.
-    var symbols = [Currency]()
+    //var symbols = [Currency]()
+    var symbols = BehaviorRelay<[Currency]>(value: [Currency]())
     /// Delegate for ViewController
     var delegate: CurrencyViewModelDelegate?
     ///Selected base currency
-    var baseCurrency : Currency?
+    var baseCurrency  = PublishSubject<Currency?>()
     /// First selection mode or not.
-    var isSymbolMode : Bool = true
+    //var isSymbolMode : Bool = true
+    
+    
+    var isSymbolMode = BehaviorRelay<Bool>(value: true)
+    
+    var disposeBag = DisposeBag()
+    
+    
+    override init() {
+        super.init()
+        
+        baseCurrency.subscribe(onNext: { currency in
+            self.isSymbolMode.accept(false)
+            }).disposed(by: disposeBag)
+        
+        baseCurrency.flatMap { currency -> Observable<Bool> in
+            return (currency != nil) ? Observable.just(false) : Observable.just(true)
+            }.bind(to: isSymbolMode).disposed(by: disposeBag)
+        
+    }
+    
 }
 
 extension CurrenciesViewModel {
+    
     
     /**
      Resets the values of the page to Initial state.
      
      */
     func resetValues() {
-        self.currencies = [Currency]()
-        self.symbols = [Currency]()
-        self.baseCurrency = nil
-        self.isSymbolMode = true
+        self.currencies.accept([Currency]())
+        self.symbols.accept([Currency]())
+        self.baseCurrency.onNext(nil)
+        self.isSymbolMode.accept(true)
     }
     /**
      Gets the symbols of the currencies.
@@ -81,28 +77,30 @@ extension CurrenciesViewModel {
      */
     func getSymbols() {
 
-        ViewUtil.showLoadingView()
+        self.isLoading.accept(true)
         guard let _delegate = delegate else {
             return
         }
         CurrencyService.getSymbols { (model, error) in
-            _delegate.hideIndicators()
+            self.isLoading.accept(false)
             guard model != nil else {
-                _delegate.requestErrorReturned(message: nil)
+                //_delegate.requestErrorReturned(message: nil)
+                self.errorMessage.onNext(nil)
                 return
             }
             
             guard let resultSymbols = model?.symbols else {
-                return _delegate.requestErrorReturned(message: nil)
+                //return _delegate.requestErrorReturned(message: nil)
+                return self.errorMessage.onNext(nil)
                 
             }
             
-            self.symbols.removeAll()
+            var newSymbols = [Currency]()
             for (name, description) in resultSymbols {
                 let createdSymbol = Currency(name: name, description: description, value: nil)
-                self.symbols.append(createdSymbol)
+                newSymbols.append(createdSymbol)
             }
-            _delegate.getSymbolRequestCompleted()
+            self.symbols.accept(newSymbols)
         }
 
     }
@@ -116,27 +114,27 @@ extension CurrenciesViewModel {
      custom-built just for you.
      */
     func getCurrencies(baseCurrency : String) {
-        ViewUtil.showLoadingView()
+        self.isLoading.accept(true)
         guard let _delegate = delegate else {
             return
         }
         
         CurrencyService.getLatestCurrencies(baseCurrency: baseCurrency) { (model, error) in
-            _delegate.hideIndicators()
+            self.isLoading.accept(false)
             guard model != nil else {
-                _delegate.requestErrorReturned(message: nil)
+                self.errorMessage.onNext(nil)
                 return
             }
             guard let resultRates = model?.rates else {
-                return _delegate.requestErrorReturned(message: nil)
+                return self.errorMessage.onNext(nil)
                 
             }
-            self.currencies.removeAll()
+            var newCurrencies = [Currency]()
             for (name, rate) in resultRates {
                 let createdSymbol = Currency(name: name, description: nil, value: rate)
-                self.currencies.append(createdSymbol)
+                newCurrencies.append(createdSymbol)
             }
-            _delegate.getLatestCurrenciesRequestCompleted()
+            self.currencies.accept(newCurrencies)
         }
         
     }
@@ -152,14 +150,14 @@ extension CurrenciesViewModel {
         guard let _delegate = delegate else {
             return
         }
-        if self.isSymbolMode {
-            self.baseCurrency = symbols[row]
-            _delegate.baseCurrencySelected(currency: symbols[row])
-            self.isSymbolMode = false
+        if self.isSymbolMode.value {
+            //self.baseCurrency = symbols.value[row]
+            //_delegate.baseCurrencySelected(currency: symbols.value[row])
+            self.isSymbolMode.accept(false)
         }
         else
         {
-            _delegate.conversionCurrencySelected(currency: currencies[row])
+            _delegate.conversionCurrencySelected(currency: currencies.value[row])
         }
     }
 }
