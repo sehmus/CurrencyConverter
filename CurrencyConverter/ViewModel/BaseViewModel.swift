@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 public class BaseViewModel {
-    var title : BehaviorRelay<String>?
+    var title = BehaviorRelay<String>(value: "")
     var isLoading = BehaviorRelay<Bool>(value: false)
     var errorMessage = PublishSubject<String?>()
 }

@@ -8,9 +8,33 @@
 
 import Foundation
 import Alamofire
+import RxSwift
 
 public class CurrencyService : NSObject {
     
+    
+    /**
+     Gets Currencies related to Selected Currency.
+     
+     - Parameters:
+     - baseCurrency: The base currency selected by user.
+     - completionHandler: Callback for getting model or error.
+
+     */
+    public static func getLatestMockCurrencies(symbols : [Currency] ) -> Observable<[Currency]> {
+
+        let observable = Observable<[Currency]>.create { obs  in
+            var currencies = [Currency]()
+            for i in 0...symbols.count-1 {
+                currencies.append(Currency(name: symbols[i].name, description: symbols[i].description, value: Double.random(in: 0...100)))
+            }
+            
+            obs.onNext(currencies)
+            return Disposables.create()
+        }
+        
+        return observable
+    }
     
     /**
      Gets Currencies related to Selected Currency.

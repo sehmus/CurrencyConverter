@@ -19,9 +19,7 @@ protocol CurrencyViewModelDelegate {
      */
     func conversionCurrencySelected(currency : Currency)
     
-    func resetUIState()
-    
-    
+ 
 }
 
 public class CurrenciesViewModel : BaseViewModel {
@@ -34,25 +32,32 @@ public class CurrenciesViewModel : BaseViewModel {
     var delegate: CurrencyViewModelDelegate?
     ///Selected base currency
     var baseCurrency  = PublishSubject<Currency?>()
+    
+    ///Selected conversion currency
+    var conversionCurrency  = PublishSubject<Currency?>()
+    
     /// First selection mode or not.
-    //var isSymbolMode : Bool = true
-    
-    
     var isSymbolMode = BehaviorRelay<Bool>(value: true)
     
     var disposeBag = DisposeBag()
+    
+    var informationText = BehaviorRelay<String>(value:"")
     
     
     override init() {
         super.init()
         
-        baseCurrency.subscribe(onNext: { currency in
-            self.isSymbolMode.accept(false)
-            }).disposed(by: disposeBag)
+//        baseCurrency.subscribe(onNext: { currency in
+//            self.isSymbolMode.accept(false)
+//            }).disposed(by: disposeBag)
+//
+//        baseCurrency.flatMap { currency -> Observable<Bool> in
+//            return (currency != nil) ? Observable.just(false) : Observable.just(true)
+//            }.bind(to: isSymbolMode).disposed(by: disposeBag)
         
-        baseCurrency.flatMap { currency -> Observable<Bool> in
-            return (currency != nil) ? Observable.just(false) : Observable.just(true)
-            }.bind(to: isSymbolMode).disposed(by: disposeBag)
+        self.title.accept("currencies.page.title".localized)
+        self.informationText.accept("currencies.page.lblinformation.base.text".localized)
+        
         
     }
     
@@ -78,19 +83,13 @@ extension CurrenciesViewModel {
     func getSymbols() {
 
         self.isLoading.accept(true)
-        guard let _delegate = delegate else {
-            return
-        }
         CurrencyService.getSymbols { (model, error) in
             self.isLoading.accept(false)
             guard model != nil else {
-                //_delegate.requestErrorReturned(message: nil)
                 self.errorMessage.onNext(nil)
                 return
             }
-            
             guard let resultSymbols = model?.symbols else {
-                //return _delegate.requestErrorReturned(message: nil)
                 return self.errorMessage.onNext(nil)
                 
             }
@@ -115,27 +114,36 @@ extension CurrenciesViewModel {
      */
     func getCurrencies(baseCurrency : String) {
         self.isLoading.accept(true)
-        guard let _delegate = delegate else {
-            return
-        }
         
-        CurrencyService.getLatestCurrencies(baseCurrency: baseCurrency) { (model, error) in
-            self.isLoading.accept(false)
-            guard model != nil else {
-                self.errorMessage.onNext(nil)
-                return
-            }
-            guard let resultRates = model?.rates else {
-                return self.errorMessage.onNext(nil)
-                
-            }
-            var newCurrencies = [Currency]()
-            for (name, rate) in resultRates {
-                let createdSymbol = Currency(name: name, description: nil, value: rate)
-                newCurrencies.append(createdSymbol)
-            }
-            self.currencies.accept(newCurrencies)
-        }
+        CurrencyService.getLatestMockCurrencies(symbols: self.symbols.value)
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { currencies in
+                self.isLoading.accept(false)
+                self.isSymbolMode.accept(false)
+                self.currencies.accept(currencies)
+            }, onError: { error in
+                self.isLoading.accept(false)
+            }).disposed(by: disposeBag)
+
+        
+//        CurrencyService.getLatestCurrencies(baseCurrency: baseCurrency) { (model, error) in
+//
+//            guard model != nil else {
+//                self.errorMessage.onNext(nil)
+//                return
+//            }
+//            guard let resultRates = model?.rates else {
+//                return self.errorMessage.onNext(nil)
+//
+//            }
+//            var newCurrencies = [Currency]()
+//            for (name, rate) in resultRates {
+//                let createdSymbol = Currency(name: name, description: nil, value: rate)
+//                newCurrencies.append(createdSymbol)
+//            }
+//            self.currencies.accept(newCurrencies)
+//        }
         
     }
     

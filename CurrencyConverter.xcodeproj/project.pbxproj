@@ -162,9 +162,9 @@
 		4645918D23341A4400E30CD1 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				469D54D52393027D00B66A98 /* BaseViewModel.swift */,
 				4645919023341B6600E30CD1 /* CurrenciesViewModel.swift */,
 				4630F1E62336887A001A7A40 /* CurrencyConversionViewModel.swift */,
-				469D54D52393027D00B66A98 /* BaseViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -172,8 +172,8 @@
 		4645918E23341A4C00E30CD1 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				467533482333B59600A2063A /* CurrenciesViewController.swift */,
 				46C845882334EEAD00B37A50 /* BaseViewController.swift */,
+				467533482333B59600A2063A /* CurrenciesViewController.swift */,
 				4630F1E4233686E3001A7A40 /* CurrencyConversionViewController.swift */,
 			);
 			path = ViewController;

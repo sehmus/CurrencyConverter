@@ -18,6 +18,10 @@ class CurrenciesViewController: BaseViewController {
     
     //Pull to refresh Currencies TableView.
     private let refreshControl = UIRefreshControl()
+    private var compositeDisposable = CompositeDisposable()
+    
+    var currencyRequestObservable : Observable<[Currency]>?
+    var lastTableBindDisposable : Disposable?
     
     
 //    ViewModel of CurrenciesViewController
@@ -30,12 +34,10 @@ class CurrenciesViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "currencies.page.title".localized
-        self.lblInformation.text = "currencies.page.lblinformation.base.text".localized
+        self.currenciesVieWModel.informationText.asObservable().bind(to: lblInformation.rx.text).disposed(by: disposeBag)
         self.viewModel = self.currenciesVieWModel
         
         self.tblCurrencies.rx.setDelegate(self).disposed(by: disposeBag)
-        //self.tblCurrencies.delegate = nil
         
 //      Register Custom Table View Cell
         tblCurrencies.register(UINib(nibName: CurrencyTableViewCell.className, bundle: Bundle(for: CurrencyTableViewCell.self)), forCellReuseIdentifier: CurrencyTableViewCell.className)
@@ -59,35 +61,48 @@ class CurrenciesViewController: BaseViewController {
         self.observeSymbolRequest()
         self.observeCurrencyRequest()
         self.observeBaseCurrency()
+        self.observeConversionCurrency()
         self.observeTableViewSelection()
         
 
     }
     
-    func observeSymbolRequest() {
-
-        self.currenciesVieWModel.symbols
-            .bind(to: self.tblCurrencies.rx.items(cellIdentifier: CurrencyTableViewCell.className, cellType: CurrencyTableViewCell.self)) { (row, element, cell) in
-                
-                if self.currenciesVieWModel.isSymbolMode.value {
-                    cell.bindCurrencyModel(currency: element)
-                }
-                else
-                {
-                    //cell.bindCurrencyModel(currency: currenciesVieWModel.currencies.value[indexPath.row])
-                }
+    func bindTableView(observable: Observable<[Currency]>)
+    {
+        if let lastTableBindDisposable = self.lastTableBindDisposable
+        {
+            lastTableBindDisposable.dispose()
         }
-        .disposed(by: self.disposeBag)
+        lastTableBindDisposable = observable.bind(to: self.tblCurrencies.rx.items(cellIdentifier: CurrencyTableViewCell.className, cellType: CurrencyTableViewCell.self)) { (row, element, cell) in
+                cell.bindCurrencyModel(currency: element)
+        }
     }
     
-    func observeTableViewSelection() {
-        self.tblCurrencies.rx.modelSelected(Currency.self).asDriver(onErrorJustReturn: Currency(name: "", description: "", value: 0)).drive(self.currenciesVieWModel.baseCurrency).disposed(by: disposeBag)
+    
+    func observeSymbolRequest() {
+
+        self.currenciesVieWModel.symbols.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.bindTableView(observable: self.currenciesVieWModel.symbols.asObservable())
+            }).disposed(by: disposeBag)
     }
     
     func observeCurrencyRequest() {
-        self.currenciesVieWModel.currencies.subscribe(onNext: { currencies in
-            self.tblCurrencies.reloadData()
+        self.currenciesVieWModel.currencies.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.bindTableView(observable: self.currenciesVieWModel.currencies.asObservable())
             }).disposed(by: disposeBag)
+    }
+    
+    func observeTableViewSelection() {
+        let symbolObservable =  self.tblCurrencies.rx.modelSelected(Currency.self).filter { _ -> Bool in
+            self.currenciesVieWModel.isSymbolMode.value == true
+        }
+        
+        let currencyObservable =  self.tblCurrencies.rx.modelSelected(Currency.self).filter { _ -> Bool in
+            self.currenciesVieWModel.isSymbolMode.value == false
+        }
+
+        symbolObservable.asDriver(onErrorJustReturn: Currency(name: "", description: "", value: 0)).drive(self.currenciesVieWModel.baseCurrency).disposed(by: disposeBag)
+        currencyObservable.asDriver(onErrorJustReturn: Currency(name: "", description: "", value: 0)).drive(self.currenciesVieWModel.conversionCurrency).disposed(by: disposeBag)
     }
     
     func observeBaseCurrency() {
@@ -105,6 +120,18 @@ class CurrenciesViewController: BaseViewController {
             
             }).disposed(by: disposeBag)
     }
+    
+    
+    func observeConversionCurrency() {
+        self.currenciesVieWModel.conversionCurrency.observeOn(MainScheduler.instance).subscribe(onNext: { currency in
+               
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: CurrencyConversionViewController.className) as! CurrencyConversionViewController
+            vc.ccViewModel.baseCurrency = currency
+            vc.ccViewModel.conversionCurrency = currency
+            self.navigationController?.pushViewController(vc, animated: true)
+               
+               }).disposed(by: disposeBag)
+       }
     
     override func hideAllIndicators() {
         super.hideAllIndicators()
@@ -139,10 +166,6 @@ class CurrenciesViewController: BaseViewController {
         }
     }
     
-}
-
-
-extension CurrenciesViewController : CurrencyViewModelDelegate {
     /**
      Resets UI State to Initial
      */
@@ -155,6 +178,12 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
         self.tblCurrencies.reloadData()
     }
     
+}
+
+
+extension CurrenciesViewController : CurrencyViewModelDelegate {
+
+    
     /**
      This method is called when conversion currency selected by user.
      
@@ -163,32 +192,9 @@ extension CurrenciesViewController : CurrencyViewModelDelegate {
      
      */
     func conversionCurrencySelected(currency: Currency) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: CurrencyConversionViewController.className) as! CurrencyConversionViewController
         
         
-        //TODO: Fix this
-        //guard let _baseCurrency = self.currenciesVieWModel.baseCurrency else { return }
-        //vc.ccViewModel.baseCurrency = _baseCurrency
-        vc.ccViewModel.conversionCurrency = currency
-        self.navigationController?.pushViewController(vc, animated: true)
         
-        
-    }
-    
-    /**
-     Appropriate method for showing error message when request finished with error.
-     
-     - Parameters:
-     - message: String for showing user.
-     
-     */
-    func requestErrorReturned(message: String?) {
-        guard let msg = message else{
-            ViewUtil.displayErrorMessage(vc: self)
-            return
-        }
-        
-        ViewUtil.displayErrorMessage(vc: self, message: msg)
     }
     
 }

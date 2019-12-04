@@ -18,10 +18,13 @@ class BaseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        if let viewModel = self.viewModel { viewModel.title.asObservable().bind(to: self.rx.title).disposed(by: disposeBag)}
         self.checkLoading()
         self.checkError()
         
